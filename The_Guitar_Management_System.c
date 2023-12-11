@@ -64,7 +64,7 @@ int addGuitar(struct Guitar **guitars, int *numGuitars, FILE *file) {
     inputGuitarInfo(&(*guitars)[*numGuitars - 1], *numGuitars);
     writeGuitarDetails(file, &(*guitars)[*numGuitars - 1]);
 
-    // Additional error checking for file writing
+    
     if (ferror(file)) {
         perror("Error writing to file");
         return 0;
@@ -73,7 +73,6 @@ int addGuitar(struct Guitar **guitars, int *numGuitars, FILE *file) {
     return 1;
 }
 
-// ... (other functions remain unchanged)
 
 int main() {
     FILE *file = fopen("guitar_quality_report.txt", "w");
@@ -96,11 +95,11 @@ int main() {
         printf("Enter your choice: ");
         if (scanf("%d", &choice) != 1) {
             printf("Invalid input. Please enter a number.\n");
-            while (getchar() != '\n');  // Clear the input buffer
+            while (getchar() != '\n');  
             continue;
         }
 
-        while (getchar() != '\n');  // Consume the newline character left in the buffer
+        while (getchar() != '\n'); 
 
         switch (choice) {
             case 1:
@@ -110,12 +109,12 @@ int main() {
                     return 1;
                 }
                 break;
-            // ... (other cases remain unchanged)
+    
         }
 
     } while (choice != 5);
 
-    // Additional error checking for file closing
+
     if (fclose(file) != 0) {
         perror("Error closing file");
         free(guitars);
