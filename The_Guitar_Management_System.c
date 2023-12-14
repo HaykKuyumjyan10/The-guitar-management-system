@@ -64,7 +64,6 @@ int addGuitar(struct Guitar **guitars, int *numGuitars, FILE *file) {
     inputGuitarInfo(&(*guitars)[*numGuitars - 1], *numGuitars);
     writeGuitarDetails(file, &(*guitars)[*numGuitars - 1]);
 
-    
     if (ferror(file)) {
         perror("Error writing to file");
         return 0;
@@ -73,6 +72,28 @@ int addGuitar(struct Guitar **guitars, int *numGuitars, FILE *file) {
     return 1;
 }
 
+int searchGuitar(struct Guitar *guitars, int numGuitars, int serialNumber) {
+    for (int i = 0; i < numGuitars; i++) {
+        if (guitars[i].serialNumber == serialNumber) {
+            return i; 
+        }
+    }
+    return -1;  
+}
+
+int removeGuitar(struct Guitar **guitars, int *numGuitars, int serialNumber) {
+    int index = searchGuitar(*guitars, *numGuitars, serialNumber);
+    if (index != -1) {
+       
+        for (int i = index; i < *numGuitars - 1; i++) {
+            (*guitars)[i] = (*guitars)[i + 1];
+        }
+        (*numGuitars)--;
+        *guitars = realloc(*guitars, (*numGuitars) * sizeof(struct Guitar));
+        return 1;  
+    }
+    return 0;  
+}
 
 int main() {
     FILE *file = fopen("guitar_quality_report.txt", "w");
@@ -95,11 +116,11 @@ int main() {
         printf("Enter your choice: ");
         if (scanf("%d", &choice) != 1) {
             printf("Invalid input. Please enter a number.\n");
-            while (getchar() != '\n');  
+            while (getchar() != '\n');
             continue;
         }
 
-        while (getchar() != '\n'); 
+        while (getchar() != '\n');
 
         switch (choice) {
             case 1:
@@ -109,11 +130,55 @@ int main() {
                     return 1;
                 }
                 break;
-    
+
+            case 2: {
+                int serialNumberToRemove;
+                printf("Enter the serial number of the guitar to remove: ");
+                scanf("%d", &serialNumberToRemove);
+                while (getchar() != '\n');
+
+                if (removeGuitar(&guitars, &numGuitars, serialNumberToRemove)) {
+                    printf("Guitar removed successfully.\n");
+                } else {
+                    printf("Guitar not found.\n");
+                }
+                break;
+            }
+
+            case 3: {
+                int serialNumberToSearch;
+                printf("Enter the serial number of the guitar to search: ");
+                scanf("%d", &serialNumberToSearch);
+                while (getchar() != '\n');
+
+                int index = searchGuitar(guitars, numGuitars, serialNumberToSearch);
+                if (index != -1) {
+                    printf("Guitar found at index %d.\n", index);
+                    
+                } else {
+                    printf("Guitar not found.\n");
+                }
+                break;
+            }
+
+            case 4:
+                printf("\nGuitar Details:\n");
+                for (int i = 0; i < numGuitars; i++) {
+                    printf("\nDetails for Guitar %d:\n", i + 1);
+                    writeGuitarDetails(stdout, &guitars[i]);
+                }
+                break;
+
+            case 5:
+              
+                break;
+
+            default:
+                printf("Invalid choice. Please enter a number between 1 and 5.\n");
+                break;
         }
 
     } while (choice != 5);
-
 
     if (fclose(file) != 0) {
         perror("Error closing file");
@@ -126,3 +191,4 @@ int main() {
 
     return 0;
 }
+
